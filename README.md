@@ -1,4 +1,6 @@
-# Google Spreadsheets Python API
+# gspread: Google Spreadsheets Python API
+
+[![Build Status](https://travis-ci.org/robin900/gspread.svg?branch=master)](https://travis-ci.org/robin900/gspread)
 
 Manage your spreadsheets with _gspread_ in Python.
 
