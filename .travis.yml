@@ -1,12 +1,18 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.6-dev"
-  - "3.7-dev"
-  - "nightly"
-install: "pip install oauth2client requests[security]"
-script: nosetests -vv tests/mock_tests.py
+- '2.6'
+- '2.7'
+- '3.4'
+- '3.5'
+- '3.6'
+- 3.6-dev
+- 3.7-dev
+- nightly
+install: 
+- if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then travis_retry pip install pyOpenSSL==17.*; fi
+- pip install oauth2client requests[security]
+script: python setup.py test -s tests.test
+before_install:
+- openssl aes-256-cbc -K $encrypted_c6289c94e362_key -iv $encrypted_c6289c94e362_iv
+  -in tests/encrypted_files.tar.enc -out tests/encrypted_files.tar -d
+- tar xvf tests/encrypted_files.tar

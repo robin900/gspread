@@ -108,9 +108,12 @@ class UtilsTest(unittest.TestCase):
 
 
 class GspreadTest(unittest.TestCase):
+    gc = None
 
-    @classmethod
-    def setUpClass(cls):
+    def _ensureGspreadClient(self):
+        cls = self.__class__
+        if cls.gc is not None:
+            return 
         try:
             cls.config = read_config(CONFIG_FILENAME)
             credentials = read_credentials(CREDS_FILENAME)
@@ -120,6 +123,7 @@ class GspreadTest(unittest.TestCase):
             raise Exception(msg % e.filename)
 
     def setUp(self):
+        self._ensureGspreadClient()
         self.assertTrue(isinstance(self.gc, gspread.client.Client))
 
 
@@ -218,12 +222,13 @@ class SpreadsheetTest(GspreadTest):
 
 
 class WorksheetTest(GspreadTest):
-
     """Test for gspread.Worksheet."""
+    spreadsheet = None
 
-    @classmethod
-    def setUpClass(cls):
-        super(WorksheetTest, cls).setUpClass()
+    def _ensureSpreadsheet(self):
+        cls = self.__class__
+        if cls.spreadsheet is not None:
+            return
         title = cls.config.get('Spreadsheet', 'title')
         cls.spreadsheet = cls.gc.open(title)
         try:
@@ -236,6 +241,7 @@ class WorksheetTest(GspreadTest):
 
     def setUp(self):
         super(WorksheetTest, self).setUp()
+        self._ensureSpreadsheet()
         # NOTE(msuozzo): Here, a new worksheet is created for each test.
         # This was determined to be faster than reusing a single sheet and
         # having to clear its contents after each test.

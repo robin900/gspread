@@ -1,3 +1,4 @@
 nose
 requests[security]
 oauth2client
+unittest2

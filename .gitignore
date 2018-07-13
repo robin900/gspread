@@ -1,6 +1,7 @@
 *.pyc
 tests/tests.config
 tests/creds.json
+tests/encrypted_files.tar
 
 build/
 dist/
