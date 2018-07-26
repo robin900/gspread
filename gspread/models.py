@@ -436,19 +436,22 @@ class Worksheet(object):
             for j, value in enumerate(row)
         ]
 
-    def get_all_values(self):
+    def get_all_values(self, value_render_option='FORMATTED_VALUE'):
         """Returns a list of lists containing all cells' values as strings.
 
         """
 
-        data = self.spreadsheet.values_get(self.title)
+        data = self.spreadsheet.values_get(
+            self.title, 
+            params={'valueRenderOption': value_render_option}
+        )
 
         try:
             return fill_gaps(data['values'])
         except KeyError:
             return []
 
-    def get_all_records(self, empty2zero=False, head=1, default_blank=""):
+    def get_all_records(self, empty2zero=False, head=1, default_blank="", value_render_option='FORMATTED_VALUE'):
         """Returns a list of dictionaries, all of them having the contents
         of the spreadsheet with the head row as keys and each of these
         dictionaries holding the contents of subsequent rows of cells
@@ -463,14 +466,19 @@ class Worksheet(object):
                      from 1 following the numeration of the spreadsheet.
         :param default_blank: determines whether empty cells are converted
                               to something else except empty string or zero.
+        :param value_render_option: how the cell values will be provided;
+                                    default is FORMATTED_VALUE.
         """
 
         idx = head - 1
 
-        data = self.get_all_values()
+        data = self.get_all_values(value_render_option=value_render_option)
         keys = data[idx]
-        values = [numericise_all(row, empty2zero, default_blank)
-                  for row in data[idx + 1:]]
+        if value_render_option != 'RAW':
+            values = [numericise_all(row, empty2zero, default_blank)
+                      for row in data[idx + 1:]]
+        else:
+            values = [row for row in data[idx + 1:]]
 
         return [dict(zip(keys, row)) for row in values]
 
